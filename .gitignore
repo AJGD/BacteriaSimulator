@@ -1,0 +1,4 @@
+project/*
+!project/build.properties
+target/*
+**.swp
