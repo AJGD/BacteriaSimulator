@@ -3,4 +3,4 @@
 Do budowania używamy sbt.
 W projekcie użyliśmy biblioteki Akka.
 
-Projekt ma wykonywać serię symulacji koloni bakterii.
+Projekt ma wykonywać serię symulacji kolonii bakterii.
