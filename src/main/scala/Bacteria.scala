@@ -1,5 +1,5 @@
 package main.scala
-import akka.actor.{Actor, ActorSystem, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props, PoisonPill}
 
 //Bacteria is a main class defining how a Bacteria behaves.
 //id essentially serves as Bacteria's name, containing its basic mutation/cloning history.
@@ -9,8 +9,8 @@ import akka.actor.{Actor, ActorSystem, Props}
 //Bacteria's name's meaning:
 // --> adjectives at the beginning describe the mutations (newer first)
 // --> number at the and describe how it was cloned (bacteria called X changes to two copies of itself, X0 and X1)
-class Bacteria(var id: String, var antibioticResistance: Double = 0.1,
-               var cloneChance: Double = 0.9, var mutationChance: Double = 0.7,
+class Bacteria(var id: String, var antibioticResistance: Double = 0.3,
+               var cloneChance: Double = 0.7, var mutationChance: Double = 0.7,
                var mutations: Set[Mutation] = Set()
               ) extends Actor {
 
@@ -25,6 +25,10 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.1,
         m.mutate(this)
       mutations  = mutations + m
     }
+    case a: Antibiotic => {
+      if(randomNum() > antibioticResistance)
+      a.endanger(this)
+    }
     case "your name?" => print(id + ", ")
     case "clone yourself" => {
       if (randomNum() < cloneChance) {
@@ -32,9 +36,14 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.1,
         val newCloneChance = if(cloneChance <0.1) 0 else cloneChance - 0.1
         id = id + "0"
         cloneChance =newCloneChance
-        context.system.actorOf(Props(new Bacteria(newId, cloneChance = newCloneChance)))
+        context.system.actorSelection("/user/BacteriaKeeper") ! AddNewBacteria(context.system.actorOf(Props(
+          new Bacteria(id = newId, cloneChance = newCloneChance))))
       }
     }
     case _ => println("I don't understand that message. I'm just a bacteria.")
+  }
+  def wither() = {
+    context.system.actorSelection("/user/BacteriaKeeper") ! RemoveBacteria(self)
+    self ! PoisonPill
   }
 }
