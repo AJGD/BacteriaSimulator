@@ -11,13 +11,12 @@
 
 //wielokrotne wykonanie -> W
 
-
-
+//Sugestia: klasa BacteriaKeeper chyba może się przydać w kwestii outputowania zbiorowych informacji o bakteriach bo zawiera zbiór ich wszystkich ^^
 
 
 package main.scala
 
-import akka.actor.{Actor, ActorSystem, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 
 //fun fact: both plural and singular of bacteria is "bacteria". One bacteria. Two bacteria. etc.
 
@@ -27,28 +26,39 @@ object BacteriaSimulatorApp extends App {
   //this creates the system in which the Bacteria run.
   val system = ActorSystem("BacteriaEnvironment")
   //this adds the first Bacteria - this one is called Alice.
-  val firstBacteria = system.actorOf(Props(new Bacteria("Alice")))
-  //system.actorSelection("/user/*") ! message  - means, in this context, sending the message to all Bacteria.
-  //the code below just demonstrates how interesting it gets once there is more Bacteria...
+  val bacteriaKeeper = system.actorOf(Props(new BacteriaKeeper), "BacteriaKeeper")
+  val firstBacteria = system.actorOf(Props(new Bacteria(id = "Alice")))
   //TODO: a more compact way to describe the Bacteria that run around?
   //TODO: DEFINITELY there should be a way to count them and display, like, "3 Photosynthetic Bacteria, 4 Sterilized Bacteria" etc
+  bacteriaKeeper ! AddNewBacteria(firstBacteria)
+  //bacteriaKeeper is responsible for keeping track of all bacteria considered active. Bacteria's responses when cloning or dying all contain appropriate messages to this actor.
+
+  def sendToAllBacteria(message:Any):Unit = {
+    bacteriaKeeper ! SendAll(message)
+  }
+
+  for (_ <- 1 to 4) {
+    sendToAllBacteria("clone yourself")
+    Thread.sleep(100)
+  }
+  sendToAllBacteria(Photosynthesis())
+  Thread.sleep(100)
   for (_ <- 1 to 3) {
-    system.actorSelection("/user/*") ! "clone yourself"
-    Thread.sleep(300)
+    sendToAllBacteria("clone yourself")
+    Thread.sleep(100)
   }
-  system.actorSelection("/user/*") ! Photosynthesis()
-  Thread.sleep(300)
-  for (_ <- 1 to 2) {
-    system.actorSelection("/user/*") ! "clone yourself"
-    Thread.sleep(300)
+  Thread.sleep(100)
+  for (_ <- 1 to 3) {
+    sendToAllBacteria("clone yourself")
+    Thread.sleep(100)
   }
-  system.actorSelection("/user/*") ! Sterilization()
-  Thread.sleep(300)
-  for (_ <- 1 to 2) {
-    system.actorSelection("/user/*") ! "clone yourself"
-    Thread.sleep(300)
-  }
-  println("Currently existing Bacteria:")
-  system.actorSelection("/user/*") ! "your name?"
+  println("Before antibiotics:")
+  sendToAllBacteria("your name?")
   println("")
+  sendToAllBacteria(Spectinomycin())
+  Thread.sleep(100)
+  println("After antibiotics:")
+  sendToAllBacteria("your name?")
+  println("")
+  system.terminate()
 }
