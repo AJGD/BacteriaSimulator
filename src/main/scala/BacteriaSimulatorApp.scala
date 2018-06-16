@@ -20,45 +20,29 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 
 //fun fact: both plural and singular of bacteria is "bacteria". One bacteria. Two bacteria. etc.
 
-
-
 object BacteriaSimulatorApp extends App {
-  //this creates the system in which the Bacteria run.
-  val system = ActorSystem("BacteriaEnvironment")
-  //this adds the first Bacteria - this one is called Alice.
-  val bacteriaKeeper = system.actorOf(Props(new BacteriaKeeper), "BacteriaKeeper")
-  val firstBacteria = system.actorOf(Props(new Bacteria(id = "Alice")))
-  //TODO: a more compact way to describe the Bacteria that run around?
-  //TODO: DEFINITELY there should be a way to count them and display, like, "3 Photosynthetic Bacteria, 4 Sterilized Bacteria" etc
-  bacteriaKeeper ! AddNewBacteria(firstBacteria)
-  //bacteriaKeeper is responsible for keeping track of all bacteria considered active. Bacteria's responses when cloning or dying all contain appropriate messages to this actor.
+    var simulations: Integer = 1
+    if(args.size > 0) {
+        //some naive args parsing
+        try {
+            simulations = args(0).toInt
+        } catch {
+            case nfe: NumberFormatException =>
+                println("Wrong arguments format.\n Making 1 sim, 1 cycle.")
+            case e: Exception =>
+                println("Unexpected args exception. Proceeding with defaults.")
+        }
+    }
 
-  def sendToAllBacteria(message:Any):Unit = {
-    bacteriaKeeper ! SendAll(message)
-  }
+    //this creates the system in which the Bacteria run.
+    val system = ActorSystem("BacteriaEnvironment")
+    val stat = system.actorOf(Props(new StatisticsGen()), "Stat")
+    for(i <- 1 to simulations) {
+        println(s"Simulation $i")
+      system.actorOf(Props(new OrdersGenerator()), s"OrderGenerator$i")
+      Thread.sleep(5000)
+    }
+    stat ! "Summary"
+    system.terminate()
 
-  for (_ <- 1 to 4) {
-    sendToAllBacteria("clone yourself")
-    Thread.sleep(100)
-  }
-  sendToAllBacteria(Photosynthesis())
-  Thread.sleep(100)
-  for (_ <- 1 to 3) {
-    sendToAllBacteria("clone yourself")
-    Thread.sleep(100)
-  }
-  Thread.sleep(100)
-  for (_ <- 1 to 3) {
-    sendToAllBacteria("clone yourself")
-    Thread.sleep(100)
-  }
-  println("Before antibiotics:")
-  sendToAllBacteria("your name?")
-  println("")
-  sendToAllBacteria(Spectinomycin())
-  Thread.sleep(100)
-  println("After antibiotics:")
-  sendToAllBacteria("your name?")
-  println("")
-  system.terminate()
 }

@@ -21,15 +21,23 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.3,
   //asking "your name?" means that the Bacteria prints its id.
   def receive = {
     case m: Mutation => {
-      if (randomNum() < mutationChance && !(mutations contains m))
-        m.mutate(this)
-      mutations  = mutations + m
+      if (randomNum() < mutationChance && !(mutations contains m)) {
+          m.mutate(this)
+          mutations  = mutations + m
+        }
     }
     case a: Antibiotic => {
       if(randomNum() > antibioticResistance)
       a.endanger(this)
     }
-    case "your name?" => print(id + ", ")
+    case "your name?" => {
+        if(mutations.contains(Photosynthesis()))
+            context.system.actorSelection("/user/BacteriaKeeper") ! "photo"
+        if(mutations.contains(Sterilization()))
+            context.system.actorSelection("/user/BacteriaKeeper") ! "steril"
+        if(mutations.contains(PreservationOverFertility()))
+            context.system.actorSelection("/user/BacteriaKeeper") ! "preserv"
+    }
     case "clone yourself" => {
       if (randomNum() < cloneChance) {
         val newId = id + "1"
@@ -42,6 +50,7 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.3,
     }
     case _ => println("I don't understand that message. I'm just a bacteria.")
   }
+
   def wither() = {
     context.system.actorSelection("/user/BacteriaKeeper") ! RemoveBacteria(self)
     self ! PoisonPill

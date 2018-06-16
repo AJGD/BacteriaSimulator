@@ -10,7 +10,7 @@ trait Mutation {
 case class Photosynthesis() extends Mutation {
   override def mutate(b: Bacteria): Unit = {
     b.id = "Photosynthetic" + b.id
-    println(b.id + " shouts: I SHINE WITH THE POWER OF THE SUN")
+    //println(b.id + " shouts: I SHINE WITH THE POWER OF THE SUN")
   }
 }
 

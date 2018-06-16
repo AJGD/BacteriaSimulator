@@ -1,4 +1,5 @@
 project/*
 !project/build.properties
 target/*
+target/.history
 **.swp
