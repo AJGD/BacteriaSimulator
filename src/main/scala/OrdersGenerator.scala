@@ -1,7 +1,7 @@
 package main.scala
 import akka.actor.{Actor, ActorRef, Props, PoisonPill}
 
-class OrdersGenerator(val cloneRate:Int = 3, val cloneMutateCycles:Int = 4, val cycles:Int = 4) extends Actor {
+class OrdersGenerator(val cloneRate:Int = 4, val cloneMutateCycles:Int = 4, val cycles:Int = 6) extends Actor {
     def receive() = {
         case _ => println("???")
     }

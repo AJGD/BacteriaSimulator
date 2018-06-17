@@ -41,8 +41,7 @@ object BacteriaSimulatorApp extends App {
         println(s"Simulation $i")
       system.actorOf(Props(new OrdersGenerator()), s"OrderGenerator$i")
       Thread.sleep(5000)
-    }
-    Thread.sleep(3000)
+  }
+    scala.io.StdIn.readLine()
     system.terminate()
-
 }
