@@ -26,9 +26,9 @@ class StatisticsGen() extends Actor {
                     else retVal.map += (key -> value)
                 }
                 retVal
-            }
-            )).map
-            .foreach {case (key: Mutation, value: Integer) => println(s" > ${value.toDouble / data.size} evolved to ${key.name()}.\n")}
+            })
+        ).map
+        .foreach {case (key: Mutation, value: Integer) => println(s" > ${value.toDouble / data.size} evolved to ${key.name()}.\n")}
 
         println(s"After antibiotic ${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.deaths).toDouble / data.size} bacteria died")
 
