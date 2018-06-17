@@ -13,14 +13,16 @@ class StatisticsGen() extends Actor {
           println(s"${report.survivals} was bacteria max population.\n\n" +
                   s" > ${report.photosynthesis} evolved to photosynthesis.\n" +
                   s" > ${report.sterilization} evolved to sterilization.\n" +
-                  s" > ${report.preservationOverFertility} evolved to preservationOverFertility.\n")
+                  s" > ${report.preservationOverFertility} evolved to preservationOverFertility.\n" +
+                  s" > ${report.fertilityOverPreservation} evolved to fertilityOverPreservation.\n")
          println(s"After antibiotic ${report.deaths} bacteria died.")
       }
       println(s"\n\n###On avarage:\n\n" +
               s"${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.survivals).toDouble / data.size} was bacteria max population.\n\n" +
               s" > ${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.photosynthesis).toDouble / data.size} evolved to photosynthesis.\n" +
               s" > ${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.sterilization).toDouble / data.size} evolved to sterilization.\n" +
-              s" > ${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.preservationOverFertility).toDouble / data.size} evolved to preservationOverFertility.\n")
+              s" > ${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.preservationOverFertility).toDouble / data.size} evolved to preservationOverFertility.\n" +
+              s" > ${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.fertilityOverPreservation).toDouble / data.size} evolved to fertilityOverPreservation.\n")
       println(s"After antibiotic ${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.deaths).toDouble / data.size} bacteria died")
     }
     case _ => println("The heck?")

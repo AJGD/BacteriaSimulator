@@ -14,6 +14,7 @@ class BacteriaKeeper( var allBacteria: Set[ActorRef] = Set()) extends Actor{
     var photosynthesis: Integer = 0
     var sterilization: Integer = 0
     var preservationOverFertility: Integer = 0
+    var fertilityOverPreservation: Integer = 0
 
     allBacteria = allBacteria + context.system.actorOf(Props(new Bacteria(id = "Alice")))
 
@@ -40,10 +41,13 @@ class BacteriaKeeper( var allBacteria: Set[ActorRef] = Set()) extends Actor{
         case "preserv" => {
             preservationOverFertility = preservationOverFertility + 1
         }
+        case "fert" => {
+            fertilityOverPreservation = fertilityOverPreservation + 1
+        }
         case "report" => {
             if(report1 == null){
                 report1 = new Report(allBacteria.size, 0, photosynthesis,
-                                        sterilization, preservationOverFertility)
+                                        sterilization, preservationOverFertility, fertilityOverPreservation)
             } else {
                 report1.deaths = report1.survivals - allBacteria.size
                 context.system.actorSelection("/user/Stat") ! report1

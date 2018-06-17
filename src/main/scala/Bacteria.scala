@@ -24,6 +24,7 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.3,
       if (randomNum() < mutationChance && !(mutations contains m)) {
           m.mutate(this)
           mutations  = mutations + m
+          adjustStats
         }
     }
     case a: Antibiotic => {
@@ -37,6 +38,8 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.3,
             context.system.actorSelection("/user/BacteriaKeeper") ! "steril"
         if(mutations.contains(PreservationOverFertility()))
             context.system.actorSelection("/user/BacteriaKeeper") ! "preserv"
+        if(mutations.contains(FertilityOverPreservation()))
+            context.system.actorSelection("/user/BacteriaKeeper") ! "fert"
     }
     case "clone yourself" => {
       if (randomNum() < cloneChance) {
@@ -54,5 +57,14 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.3,
   def wither() = {
     context.system.actorSelection("/user/BacteriaKeeper") ! RemoveBacteria(self)
     self ! PoisonPill
+  }
+
+  def adjustStats() = {
+    if(antibioticResistance<0.0) antibioticResistance = 0.0
+    if(antibioticResistance>1.0) antibioticResistance = 1.0
+    if(cloneChance<0.0) cloneChance = 0.0
+    if(cloneChance>1.0) cloneChance = 1.0
+    if(mutationChance<0.0) mutationChance = 0.0
+    if(mutationChance>1.0) mutationChance = 1.0
   }
 }

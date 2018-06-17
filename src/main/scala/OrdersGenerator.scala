@@ -1,32 +1,22 @@
 package main.scala
 import akka.actor.{Actor, ActorRef, Props, PoisonPill}
 
-class OrdersGenerator() extends Actor {
+class OrdersGenerator(val cloneRate:Int = 3, val cycles:Int = 6) extends Actor {
     def receive() = {
         case _ => println("???")
     }
     val bacteriaKeeper = context.system.actorOf(Props(new BacteriaKeeper()), "BacteriaKeeper")
 
+    import RandomGenerator.randomMutation
+
     def sendToAllBacteria(message:Any):Unit = {
         bacteriaKeeper ! SendAll(message)
+        Thread.sleep(50)
     }
 
-    for (_ <- 1 to 4) {
-        sendToAllBacteria("clone yourself")
-        Thread.sleep(100)
-    }
-
-    sendToAllBacteria(Photosynthesis())
-    Thread.sleep(100)
-
-    for (_ <- 1 to 3) {
-        sendToAllBacteria("clone yourself")
-        Thread.sleep(100)
-    }
-
-    for (_ <- 1 to 3) {
-        sendToAllBacteria("clone yourself")
-        Thread.sleep(100)
+    for(_ <- 1 to cycles) {
+        for(_ <- 1 to cloneRate) sendToAllBacteria("clone yourself")
+        sendToAllBacteria(randomMutation())
     }
 
     sendToAllBacteria("your name?")

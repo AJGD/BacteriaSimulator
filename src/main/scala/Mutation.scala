@@ -27,3 +27,10 @@ case class PreservationOverFertility() extends Mutation {
     b.antibioticResistance += 0.2
   }
 }
+
+case class FertilityOverPreservation() extends Mutation {
+  override def mutate(b: Bacteria): Unit = {
+    b.cloneChance += 0.2
+    b.antibioticResistance -= 0.2
+  }
+}
