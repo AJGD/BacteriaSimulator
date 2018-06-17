@@ -1,5 +1,5 @@
 package main.scala
-import akka.actor.{Actor, ActorRef, ActorSystem, Props, PoisonPill}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import scala.collection.mutable.MutableList
 
 class StatisticsGen() extends Actor {

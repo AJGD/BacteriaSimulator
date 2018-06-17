@@ -1,7 +1,7 @@
 package main.scala
 import akka.actor.{Actor, ActorRef, Props, PoisonPill}
 
-class OrdersGenerator(val cloneRate:Int = 3, val cloneMutateCycles:Int = 4, val cycles:Int = 3) extends Actor {
+class OrdersGenerator(val cloneRate:Int = 3, val cloneMutateCycles:Int = 4, val cycles:Int = 4) extends Actor {
     def receive() = {
         case _ => println("???")
     }
@@ -33,7 +33,7 @@ class OrdersGenerator(val cloneRate:Int = 3, val cloneMutateCycles:Int = 4, val 
         bacteriaKeeper ! "reset report"
         Thread.sleep(100)
     }
-
+    bacteriaKeeper ! "Summary"
     sendToAllBacteria(PoisonPill)
 
     Thread.sleep(100)

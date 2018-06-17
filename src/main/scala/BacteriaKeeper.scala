@@ -44,6 +44,9 @@ class BacteriaKeeper( var allBacteria: Set[ActorRef] = Set()) extends Actor{
         case "reset report" => {
             report1 = new Report()
         }
+        case "Summary" => {
+            context.system.actorSelection("/user/Stat") ! "Summary"
+        }
         case m: Mutation => {
             report1.oneMore(m)
         }

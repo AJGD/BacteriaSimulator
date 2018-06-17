@@ -42,7 +42,7 @@ object BacteriaSimulatorApp extends App {
       system.actorOf(Props(new OrdersGenerator()), s"OrderGenerator$i")
       Thread.sleep(5000)
     }
-    stat ! "Summary"
+    Thread.sleep(3000)
     system.terminate()
 
 }
