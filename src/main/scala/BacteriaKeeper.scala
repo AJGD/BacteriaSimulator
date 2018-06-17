@@ -18,7 +18,7 @@ class BacteriaKeeper( var allBacteria: Set[ActorRef] = Set()) extends Actor{
 
     allBacteria = allBacteria + context.system.actorOf(Props(new Bacteria(id = "Alice")))
 
-    var report1: Report = null
+    val report1: Report = new Report(0, -1, collection.mutable.Map())
 
 
     def receive = {
@@ -32,22 +32,10 @@ class BacteriaKeeper( var allBacteria: Set[ActorRef] = Set()) extends Actor{
         case RemoveBacteria(bacteria) => {
           allBacteria = allBacteria - bacteria
         }
-        case "photo" => {
-            photosynthesis = photosynthesis + 1
-        }
-        case "steril" => {
-            sterilization = sterilization + 1
-        }
-        case "preserv" => {
-            preservationOverFertility = preservationOverFertility + 1
-        }
-        case "fert" => {
-            fertilityOverPreservation = fertilityOverPreservation + 1
-        }
         case "report" => {
-            if(report1 == null){
-                report1 = new Report(allBacteria.size, 0, photosynthesis,
-                                        sterilization, preservationOverFertility, fertilityOverPreservation)
+            if(report1.deaths == -1){
+                report1.survivals = allBacteria.size
+                report1.deaths = 0
             } else {
                 report1.deaths = report1.survivals - allBacteria.size
                 context.system.actorSelection("/user/Stat") ! report1
@@ -56,6 +44,9 @@ class BacteriaKeeper( var allBacteria: Set[ActorRef] = Set()) extends Actor{
                     bacteria ! PoisonPill
                 self ! PoisonPill
             }
+        }
+        case m: Mutation => {
+            report1.oneMore(m)
         }
         case _ => {
             println("That's awkward. You shouldn't be here...")

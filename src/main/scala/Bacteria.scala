@@ -27,19 +27,12 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.3,
           adjustStats
         }
     }
+    case "your name?" => {
+        mutations.foreach{context.system.actorSelection("/user/BacteriaKeeper") ! _}
+    }
     case a: Antibiotic => {
       if(randomNum() > antibioticResistance)
       a.endanger(this)
-    }
-    case "your name?" => {
-        if(mutations.contains(Photosynthesis()))
-            context.system.actorSelection("/user/BacteriaKeeper") ! "photo"
-        if(mutations.contains(Sterilization()))
-            context.system.actorSelection("/user/BacteriaKeeper") ! "steril"
-        if(mutations.contains(PreservationOverFertility()))
-            context.system.actorSelection("/user/BacteriaKeeper") ! "preserv"
-        if(mutations.contains(FertilityOverPreservation()))
-            context.system.actorSelection("/user/BacteriaKeeper") ! "fert"
     }
     case "clone yourself" => {
       if (randomNum() < cloneChance) {
