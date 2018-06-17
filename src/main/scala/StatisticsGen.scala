@@ -15,7 +15,7 @@ class StatisticsGen() extends Actor {
           println(s"After antibiotic ${report.deaths} bacteria died.\n")
       }
 
-        println(s"\n\n###On avarage:\n\n" +
+        println(s"\n\n###On average:\n\n" +
             s"${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.survivals).toDouble / data.size} was bacteria max population.\n\n")
 
         (data.foldLeft(new Report(0, 0, collection.mutable.Map()))

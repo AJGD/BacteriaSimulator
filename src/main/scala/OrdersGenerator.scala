@@ -1,7 +1,7 @@
 package main.scala
 import akka.actor.{Actor, ActorRef, Props, PoisonPill}
 
-class OrdersGenerator(val cloneRate:Int = 3, val cycles:Int = 6) extends Actor {
+class OrdersGenerator(val cloneRate:Int = 3, val cloneMutateCycles:Int = 4, val cycles:Int = 3) extends Actor {
     def receive() = {
         case _ => println("???")
     }
@@ -15,19 +15,28 @@ class OrdersGenerator(val cloneRate:Int = 3, val cycles:Int = 6) extends Actor {
     }
 
     for(_ <- 1 to cycles) {
-        for(_ <- 1 to cloneRate) sendToAllBacteria("clone yourself")
-        sendToAllBacteria(randomMutation())
+        for(_ <- 1 to cloneMutateCycles) {
+            for(_ <- 1 to cloneRate) sendToAllBacteria("clone yourself")
+            sendToAllBacteria(randomMutation())
+        }
+
+        sendToAllBacteria("your name?")
+        Thread.sleep(100)
+
+        bacteriaKeeper ! "report"
+
+        sendToAllBacteria(Spectinomycin())
+        Thread.sleep(100)
+
+        bacteriaKeeper ! "report"
+        Thread.sleep(100)
+        bacteriaKeeper ! "reset report"
+        Thread.sleep(100)
     }
 
-    sendToAllBacteria("your name?")
+    sendToAllBacteria(PoisonPill)
+
     Thread.sleep(100)
-
-    bacteriaKeeper ! "report"
-
-    sendToAllBacteria(Spectinomycin())
-    Thread.sleep(100)
-
-    bacteriaKeeper ! "report"
 
     self ! PoisonPill
 }
