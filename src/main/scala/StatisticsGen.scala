@@ -2,6 +2,7 @@ package main.scala
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import scala.collection.mutable.MutableList
 
+// keeps old Reports for the sake of calculating averages.
 class StatisticsGen() extends Actor {
     val data: MutableList[Report] = MutableList();
   def receive = {
