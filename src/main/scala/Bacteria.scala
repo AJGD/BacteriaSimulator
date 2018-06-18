@@ -18,6 +18,20 @@ class Bacteria(var id: String, var antibioticResistance: Double = 0.3,
   //to mutate a Bacteria, send a Mutation to it. There is no guarantee of success, though (mutationChance!)
   //sending a string "clone yourself" yields a chance of a Bacteria duplicating itself.
   def receive = {
+    case m: PreservationOverFertility => {
+    if (randomNum() < mutationChance && !(mutations contains m) && !(mutations contains FertilityOverPreservation())) {
+        m.mutate(this)
+        mutations  = mutations + m
+        adjustStats
+      }
+    }
+    case m: FertilityOverPreservation => {
+      if (randomNum() < mutationChance && !(mutations contains m) && !(mutations contains PreservationOverFertility())) {
+          m.mutate(this)
+          mutations  = mutations + m
+          adjustStats
+        }
+    }
     case m: Mutation => {
       if (randomNum() < mutationChance && !(mutations contains m)) {
           m.mutate(this)
