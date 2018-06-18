@@ -1,19 +1,3 @@
-//A:
-//antybiotyk ~ zmiany w bakteriach -> A
-
-//testy jednostkowe -> A
-
-
-//W:
-//przekaźnik -> W
-
-//sensowny output -> W
-
-//wielokrotne wykonanie -> W
-
-//Sugestia: klasa BacteriaKeeper chyba może się przydać w kwestii outputowania zbiorowych informacji o bakteriach bo zawiera zbiór ich wszystkich ^^
-
-
 package main.scala
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}

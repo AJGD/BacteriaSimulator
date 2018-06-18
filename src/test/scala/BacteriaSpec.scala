@@ -1,3 +1,5 @@
+package test.scala
+
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ ImplicitSender, TestProbe, TestKit }
 import org.scalatest.{ BeforeAndAfterAll, Matchers, WordSpecLike }
