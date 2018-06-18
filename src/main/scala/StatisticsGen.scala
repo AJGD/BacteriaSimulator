@@ -7,13 +7,10 @@ class StatisticsGen() extends Actor {
   def receive = {
     case report: Report => {
       data += report
+      report.print()
     }
     case "Summary" => {
-      for(report <- data) {
-          println(s"\n${report.survivals} was bacteria max population.\n")
-          report.map.foreach {case (key, value) => println(s" > ${value} evolved to ${key.name()}.")}
-          println(s"After antibiotic ${report.deaths} bacteria died.\n")
-      }
+      //data.foreach(_.print())
 
         println(s"\n\n###On average:\n\n" +
             s"${data.foldLeft(0)((retVal: Int, report: Report) => retVal + report.survivals).toDouble / data.size} was bacteria max population.\n")
