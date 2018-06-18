@@ -10,16 +10,10 @@ case class AddNewBacteria(b:ActorRef) extends BacteriaKeeperMessage
 case class RemoveBacteria(b:ActorRef) extends BacteriaKeeperMessage
 case class SendAll(m:Any) extends BacteriaKeeperMessage
 
-class BacteriaKeeper( var allBacteria: Set[ActorRef] = Set()) extends Actor{
-    var photosynthesis: Integer = 0
-    var sterilization: Integer = 0
-    var preservationOverFertility: Integer = 0
-    var fertilityOverPreservation: Integer = 0
+class BacteriaKeeper( var allBacteria: Set[ActorRef] = Set(),
+            var report1: Report = new Report()) extends Actor{
 
     allBacteria = allBacteria + context.system.actorOf(Props(new Bacteria(id = "Alice")))
-
-    var report1: Report = new Report()
-
 
     def receive = {
         case SendAll(message) => {
