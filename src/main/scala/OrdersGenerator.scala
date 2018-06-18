@@ -1,7 +1,11 @@
 package main.scala
 import akka.actor.{Actor, ActorRef, Props, PoisonPill}
 
-class OrdersGenerator(val cloneRate:Int = 4, val cloneMutateCycles:Int = 4, val cycles:Int = 6) extends Actor {
+// this class actually runs the simulation, cloning and mutating Bacteria in cycles.
+// at the end of each iteration of the "big" cycle an Antibiotic is administered ("cycles" times).
+// inside the "big" cycle, the "clone-mutate" cycle repeats ("cloneMutateCycles" times).
+// before mutating, all Bacteria receive "cloneRate" messages to clone.
+class OrdersGenerator(val cloneRate:Int = 3, val cloneMutateCycles:Int = 3, val cycles:Int = 10) extends Actor {
     def receive() = {
         case _ => println("???")
     }

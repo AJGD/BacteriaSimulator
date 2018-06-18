@@ -3,7 +3,7 @@ import akka.actor.{Actor, ActorRef, Props, PoisonPill}
 
 // BacteriaKeeper is used to keep track of active bacteria.
 // if you have an ActorRef to an instance of BacteriaKeeper, you can easily send a message to all Bacteria sending SendAll(yourMessage) to said instance.
-//bacteriaKeeper is responsible for keeping track of all bacteria considered active. Bacteria's responses when cloning or dying all contain appropriate messages to this actor.
+// bacteriaKeeper is responsible for keeping track of all bacteria considered active. Bacteria's responses when cloning or dying all contain appropriate messages to this actor.
 
 trait BacteriaKeeperMessage
 case class AddNewBacteria(b:ActorRef) extends BacteriaKeeperMessage

@@ -1,19 +1,3 @@
-//A:
-//antybiotyk ~ zmiany w bakteriach -> A
-
-//testy jednostkowe -> A
-
-
-//W:
-//przekaźnik -> W
-
-//sensowny output -> W
-
-//wielokrotne wykonanie -> W
-
-//Sugestia: klasa BacteriaKeeper chyba może się przydać w kwestii outputowania zbiorowych informacji o bakteriach bo zawiera zbiór ich wszystkich ^^
-
-
 package main.scala
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
@@ -22,24 +6,39 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 
 object BacteriaSimulatorApp extends App {
     var simulations: Integer = 1
-    if(args.size > 0) {
-        //some naive args parsing
+    var cloneRate:Int = 3
+    var cloneMutateCycles:Int = 3
+    var cycles:Int = 10
+    val proceedingWithDefaults = "Unexpected number of arguments. Proceeding with defaults."
+    if(args.size == 1) {
         try {
             simulations = args(0).toInt
         } catch {
             case nfe: NumberFormatException =>
                 println("Wrong arguments format.\n Making 1 sim, 1 cycle.")
             case e: Exception =>
-                println("Unexpected args exception. Proceeding with defaults.")
+                println(proceedingWithDefaults)
         }
-    }
+    } else if(args.size == 4){
+        try {
+            simulations = args(0).toInt
+            cloneRate = args(1).toInt
+            cloneMutateCycles = args(2).toInt
+            cycles = args(3).toInt
+        } catch {
+            case nfe: NumberFormatException =>
+                println("Wrong arguments format.")
+            case e: Exception =>
+                println(proceedingWithDefaults)
+        }
+    } else println(proceedingWithDefaults)
 
     //this creates the system in which the Bacteria run.
     val system = ActorSystem("BacteriaEnvironment")
     val stat = system.actorOf(Props(new StatisticsGen()), "Stat")
     for(i <- 1 to simulations) {
         println(s"Simulation $i")
-      system.actorOf(Props(new OrdersGenerator()), s"OrderGenerator$i")
+      system.actorOf(Props(new OrdersGenerator(cloneRate, cloneMutateCycles, cycles)), s"OrderGenerator$i")
       Thread.sleep(5000)
   }
     scala.io.StdIn.readLine()
