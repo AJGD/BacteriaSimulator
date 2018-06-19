@@ -33,14 +33,14 @@ object BacteriaSimulatorApp extends App {
         }
     } else println(proceedingWithDefaults)
 
-    //this creates the system in which the Bacteria run.
-    val system = ActorSystem("BacteriaEnvironment")
-    val stat = system.actorOf(Props(new StatisticsGen()), "Stat")
     for(i <- 1 to simulations) {
         println(s"Simulation $i")
-      system.actorOf(Props(new OrdersGenerator(cloneRate, cloneMutateCycles, cycles)), s"OrderGenerator$i")
-      Thread.sleep(5000)
-  }
-    scala.io.StdIn.readLine()
-    system.terminate()
+        //this creates the system in which the Bacteria run.
+        val system = ActorSystem("BacteriaEnvironment")
+        val stat = system.actorOf(Props(new StatisticsGen()), "Stat")
+        system.actorOf(Props(new OrdersGenerator(cloneRate, cloneMutateCycles, cycles)), s"OrderGenerator$i")
+
+        scala.io.StdIn.readLine()
+        system.terminate()
+    }
 }
